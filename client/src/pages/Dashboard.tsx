@@ -65,7 +65,7 @@ const Dashboard = () => {
   return (
     <div className="container">
       <div className="dashboard-header">
-        <h1>Welcome back, {user?.username}!</h1>
+        <h1>Welcome back, {user?.username || stats?.user.username || 'Learner'}!</h1>
         <p className="text-gray">Continue your learning journey</p>
       </div>
 

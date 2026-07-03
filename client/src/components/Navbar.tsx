@@ -1,15 +1,9 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import './Navbar.css';
 
 const Navbar = () => {
-  const { user, logout } = useAuthStore();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  const { user } = useAuthStore();
 
   return (
     <nav className="navbar">
@@ -27,13 +21,10 @@ const Navbar = () => {
             <Link to="/social">Social</Link>
             <span className="user-link">
               <span className="user-avatar">
-                {user?.avatar || user?.username?.[0]?.toUpperCase()}
+                {user?.avatar || user?.username?.[0]?.toUpperCase() || '?'}
               </span>
-              <span>Level {user?.level}</span>
+              <span>Level {user?.level ?? '—'}</span>
             </span>
-            <button onClick={handleLogout} className="btn btn-outline">
-              Logout
-            </button>
           </div>
         </div>
       </div>

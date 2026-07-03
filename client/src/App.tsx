@@ -1,9 +1,8 @@
+import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { useAuthStore } from './store/authStore';
 import Navbar from './components/Navbar';
-import Login from './pages/Login';
-import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Courses from './pages/Courses';
 import CourseDetail from './pages/CourseDetail';
@@ -12,46 +11,24 @@ import Achievements from './pages/Achievements';
 import Social from './pages/Social';
 
 function App() {
-  const { token } = useAuthStore();
+  const { fetchUser } = useAuthStore();
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
 
   return (
     <div className="App">
       <Toaster position="top-right" />
-      {token && <Navbar />}
+      <Navbar />
       <Routes>
-        <Route
-          path="/login"
-          element={token ? <Navigate to="/dashboard" /> : <Login />}
-        />
-        <Route
-          path="/register"
-          element={token ? <Navigate to="/dashboard" /> : <Register />}
-        />
-        <Route
-          path="/dashboard"
-          element={token ? <Dashboard /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/courses"
-          element={token ? <Courses /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/courses/:id"
-          element={token ? <CourseDetail /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/leaderboard"
-          element={token ? <Leaderboard /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/achievements"
-          element={token ? <Achievements /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/social"
-          element={token ? <Social /> : <Navigate to="/login" />}
-        />
-        <Route path="/" element={<Navigate to={token ? "/dashboard" : "/login"} />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/courses" element={<Courses />} />
+        <Route path="/courses/:id" element={<CourseDetail />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/achievements" element={<Achievements />} />
+        <Route path="/social" element={<Social />} />
+        <Route path="/" element={<Navigate to="/dashboard" />} />
       </Routes>
     </div>
   );
