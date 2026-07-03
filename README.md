@@ -15,9 +15,9 @@ A gamified learning platform where students earn XP, level up, unlock achievemen
 
 | Layer | Stack |
 |-------|-------|
-| Backend | Node.js, Express, TypeScript, MongoDB, Mongoose |
-| Frontend | React 18, TypeScript, Vite, React Router, Zustand |
-| Auth | JWT, bcrypt |
+| Backend | Node.js, TypeScript, Express, MongoDB |
+| Frontend | React 18, TypeScript, Vite |
+| Auth | JWT  |
 | Optional | Redis (caching), Socket.io |
 
 ## Project Structure
