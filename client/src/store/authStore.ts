@@ -116,33 +116,8 @@ export const useAuthStore = create<AuthState>((set) => {
           // Server responded with error status
           const message = error.response.data?.message || error.response.data?.error || 'Login failed';
           throw new Error(message);
-        } else if (error.request || (error as any).isConfigError) {
-          // Check for configuration error first
-          if ((error as any).isConfigError) {
-            throw new Error(
-              'API URL is set to localhost in production. Please configure VITE_API_URL in Vercel environment variables.\n\n' +
-              'QUICK FIX:\n' +
-              '1. Go to https://vercel.com/dashboard\n' +
-              '2. Select your project → Settings → Environment Variables\n' +
-              '3. Add: VITE_API_URL = https://your-backend-url.com/api\n' +
-              '4. Redeploy your application'
-            );
-          }
-          
-          // Request was made but no response received (network error)
-          const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-          const isLocalhost = apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1');
-          
-          if (isLocalhost && import.meta.env.PROD) {
-            throw new Error(
-              'Backend connection failed. The API URL is set to localhost in production.\n\n' +
-              'QUICK FIX:\n' +
-              '1. Go to https://vercel.com/dashboard\n' +
-              '2. Select your project → Settings → Environment Variables\n' +
-              '3. Add: VITE_API_URL = https://your-backend-url.com/api\n' +
-              '4. Redeploy your application'
-            );
-          } else if (error.code === 'ECONNABORTED') {
+        } else if (error.request) {
+          if (error.code === 'ECONNABORTED') {
             throw new Error('Request timeout. The server is taking too long to respond. Please try again.');
           } else if (error.code === 'ERR_NETWORK') {
             throw new Error(
@@ -194,33 +169,8 @@ export const useAuthStore = create<AuthState>((set) => {
           // Server responded with error status
           const message = error.response.data?.message || error.response.data?.error || 'Registration failed';
           throw new Error(message);
-        } else if (error.request || (error as any).isConfigError) {
-          // Check for configuration error first
-          if ((error as any).isConfigError) {
-            throw new Error(
-              'API URL is set to localhost in production. Please configure VITE_API_URL in Vercel environment variables.\n\n' +
-              'QUICK FIX:\n' +
-              '1. Go to https://vercel.com/dashboard\n' +
-              '2. Select your project → Settings → Environment Variables\n' +
-              '3. Add: VITE_API_URL = https://your-backend-url.com/api\n' +
-              '4. Redeploy your application'
-            );
-          }
-          
-          // Request was made but no response received (network error)
-          const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-          const isLocalhost = apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1');
-          
-          if (isLocalhost && import.meta.env.PROD) {
-            throw new Error(
-              'Backend connection failed. The API URL is set to localhost in production.\n\n' +
-              'QUICK FIX:\n' +
-              '1. Go to https://vercel.com/dashboard\n' +
-              '2. Select your project → Settings → Environment Variables\n' +
-              '3. Add: VITE_API_URL = https://your-backend-url.com/api\n' +
-              '4. Redeploy your application'
-            );
-          } else if (error.code === 'ECONNABORTED') {
+        } else if (error.request) {
+          if (error.code === 'ECONNABORTED') {
             throw new Error('Request timeout. The server is taking too long to respond. Please try again.');
           } else if (error.code === 'ERR_NETWORK') {
             throw new Error(

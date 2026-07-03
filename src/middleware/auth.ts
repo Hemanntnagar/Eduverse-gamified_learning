@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import User, { IUser } from '../models/User';
+import { getJWTSecret } from '../utils/jwtSecret';
 
 export interface AuthRequest extends Request {
   user?: IUser;
@@ -30,18 +31,9 @@ export const protect = async (
     }
 
     try {
-      const jwtSecret = process.env.JWT_SECRET;
-      if (!jwtSecret) {
-        res.status(500).json({
-          success: false,
-          message: 'Server configuration error',
-        });
-        return;
-      }
-
       const decoded = jwt.verify(
         token,
-        jwtSecret
+        getJWTSecret()
       ) as { id: string };
 
       req.user = await User.findById(decoded.id).select('-password');
