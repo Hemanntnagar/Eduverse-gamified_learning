@@ -25,12 +25,12 @@ const Navbar = () => {
             <Link to="/leaderboard">Leaderboard</Link>
             <Link to="/achievements">Achievements</Link>
             <Link to="/social">Social</Link>
-            <Link to="/profile" className="user-link">
+            <span className="user-link">
               <span className="user-avatar">
                 {user?.avatar || user?.username?.[0]?.toUpperCase()}
               </span>
               <span>Level {user?.level}</span>
-            </Link>
+            </span>
             <button onClick={handleLogout} className="btn btn-outline">
               Logout
             </button>

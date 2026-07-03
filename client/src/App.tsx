@@ -11,7 +11,6 @@ import CourseDetail from './pages/CourseDetail';
 import Leaderboard from './pages/Leaderboard';
 import Achievements from './pages/Achievements';
 import Social from './pages/Social';
-import Profile from './pages/Profile';
 
 function App() {
   const { token } = useAuthStore();
@@ -53,10 +52,6 @@ function App() {
         <Route
           path="/social"
           element={token ? <Social /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/profile"
-          element={token ? <Profile /> : <Navigate to="/login" />}
         />
         <Route path="/" element={<Navigate to={token ? "/dashboard" : "/login"} />} />
       </Routes>

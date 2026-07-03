@@ -94,7 +94,7 @@ const Dashboard = () => {
           </div>
 
           <div className="card">
-            <h2>Achievements</h2>
+            <h2>Achievements & Badges</h2>
             <div className="achievements-preview">
               {stats.achievements.length > 0 ? (
                 <div className="achievement-list">
@@ -107,6 +107,16 @@ const Dashboard = () => {
                 </div>
               ) : (
                 <p className="text-gray">No achievements yet</p>
+              )}
+              {stats.badges.length > 0 && (
+                <div className="achievement-list" style={{ marginTop: '0.75rem' }}>
+                  {stats.badges.slice(0, 3).map((badge: any) => (
+                    <div key={badge._id} className="achievement-item">
+                      <span className="achievement-icon">{badge.icon || '🎖️'}</span>
+                      <span>{badge.name}</span>
+                    </div>
+                  ))}
+                </div>
               )}
               <Link to="/achievements" className="btn btn-outline">
                 View All

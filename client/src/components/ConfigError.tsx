@@ -108,10 +108,6 @@ const ConfigError = () => {
             Make sure it includes <code style={{ backgroundColor: '#1a1a1a', padding: '2px 6px', borderRadius: '4px' }}>/api</code> at the end.
           </p>
         </div>
-
-        <p style={{ margin: 0, fontSize: '14px', color: '#aaa', textAlign: 'center' }}>
-          See <strong>VERCEL_ENV_QUICK_SETUP.md</strong> in the repository for detailed instructions.
-        </p>
       </div>
     </div>
   );

@@ -125,8 +125,7 @@ export const useAuthStore = create<AuthState>((set) => {
               '1. Go to https://vercel.com/dashboard\n' +
               '2. Select your project → Settings → Environment Variables\n' +
               '3. Add: VITE_API_URL = https://your-backend-url.com/api\n' +
-              '4. Redeploy your application\n\n' +
-              'See VERCEL_ENV_QUICK_SETUP.md for detailed instructions.'
+              '4. Redeploy your application'
             );
           }
           
@@ -141,8 +140,7 @@ export const useAuthStore = create<AuthState>((set) => {
               '1. Go to https://vercel.com/dashboard\n' +
               '2. Select your project → Settings → Environment Variables\n' +
               '3. Add: VITE_API_URL = https://your-backend-url.com/api\n' +
-              '4. Redeploy your application\n\n' +
-              'See VERCEL_ENV_QUICK_SETUP.md for detailed instructions.'
+              '4. Redeploy your application'
             );
           } else if (error.code === 'ECONNABORTED') {
             throw new Error('Request timeout. The server is taking too long to respond. Please try again.');
@@ -205,8 +203,7 @@ export const useAuthStore = create<AuthState>((set) => {
               '1. Go to https://vercel.com/dashboard\n' +
               '2. Select your project → Settings → Environment Variables\n' +
               '3. Add: VITE_API_URL = https://your-backend-url.com/api\n' +
-              '4. Redeploy your application\n\n' +
-              'See VERCEL_ENV_QUICK_SETUP.md for detailed instructions.'
+              '4. Redeploy your application'
             );
           }
           
@@ -221,8 +218,7 @@ export const useAuthStore = create<AuthState>((set) => {
               '1. Go to https://vercel.com/dashboard\n' +
               '2. Select your project → Settings → Environment Variables\n' +
               '3. Add: VITE_API_URL = https://your-backend-url.com/api\n' +
-              '4. Redeploy your application\n\n' +
-              'See VERCEL_ENV_QUICK_SETUP.md for detailed instructions.'
+              '4. Redeploy your application'
             );
           } else if (error.code === 'ECONNABORTED') {
             throw new Error('Request timeout. The server is taking too long to respond. Please try again.');

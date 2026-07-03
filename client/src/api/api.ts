@@ -77,7 +77,6 @@ if (isApiUrlInvalid) {
     '\n3. Add: VITE_API_URL = https://your-backend-url.com/api',
     '\n4. Redeploy your application',
     '\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-    '\n📖 Full guide: See VERCEL_ENV_QUICK_SETUP.md in the repository',
     '\nCurrent API URL:', API_URL
   );
 }

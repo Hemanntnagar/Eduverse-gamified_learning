@@ -1,116 +1,200 @@
-# EDUverse - Gamified Learning Platform
+# EDUverse
 
-A comprehensive gamified learning platform with advanced game mechanics, social systems, and scalability features.
+A gamified learning platform where students earn XP, level up, unlock achievements, and compete on leaderboards while taking courses and connecting with friends.
 
 ## Features
 
-### Core Features
-- User authentication (JWT-based)
-- Course management system
-- XP and level progression
-- User dashboard
-
-### Advanced Game Mechanics
-- Achievements and badges
-- Quest system
-- Leaderboards
-- Daily challenges
-- Streak tracking
-
-### Social Systems
-- Friend system
-- Teams/Guilds
-- Real-time chat
-- Activity feed
-- Social leaderboards
-
-### Scalability Features
-- Redis caching
-- Rate limiting
-- Database indexing
-- Optimized queries
-- Real-time updates via WebSocket
+- **Authentication** — JWT-based register/login with role support (student, instructor, admin)
+- **Courses** — Browse, enroll, and complete lessons to earn XP
+- **Progression** — Levels, streaks, and XP multipliers
+- **Gamification** — Achievements, badges, quests, and leaderboards
+- **Social** — Friend requests, activity feed, user search, and teams (API)
+- **Real-time** — Socket.io server for chat and activity updates (backend ready)
 
 ## Tech Stack
 
-- **Backend**: Node.js, Express, TypeScript
-- **Frontend**: React, TypeScript, Vite
-- **Database**: MongoDB with Mongoose
-- **Caching**: Redis
-- **Real-time**: Socket.io
-- **Authentication**: JWT
+| Layer | Stack |
+|-------|-------|
+| Backend | Node.js, Express, TypeScript, MongoDB, Mongoose |
+| Frontend | React 18, TypeScript, Vite, React Router, Zustand |
+| Auth | JWT, bcrypt |
+| Optional | Redis (caching), Socket.io |
 
-## Setup
+## Project Structure
 
-1. Install dependencies:
+```
+eduverse/
+├── client/                 # React frontend (Vite)
+│   └── src/
+│       ├── pages/          # Route pages
+│       ├── components/     # Navbar, ConfigError
+│       ├── store/          # Auth state (Zustand)
+│       └── api/            # Axios client
+├── src/                    # Express backend
+│   ├── controllers/
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   └── scripts/            # Database seeding
+├── services/               # Future MMO microservices (not wired to main app)
+└── packages/               # Shared types (future architecture)
+```
+
+## Prerequisites
+
+- Node.js 18+
+- MongoDB (local or Atlas)
+- Redis (optional, for caching)
+
+## Local Development
+
+### 1. Install dependencies
+
 ```bash
 npm install
-cd client && npm install
+cd client && npm install && cd ..
 ```
 
-2. Set up environment variables:
-```bash
-cp .env.example .env
-# Edit .env with your configuration
+### 2. Configure environment variables
+
+Create a `.env` file in the project root:
+
+```env
+MONGODB_URI=mongodb://localhost:27017/eduverse
+JWT_SECRET=your-secret-key
+JWT_EXPIRE=7d
+PORT=5000
+CLIENT_URL=http://localhost:5173
+NODE_ENV=development
+
+# Optional
+REDIS_HOST=localhost
+REDIS_PORT=6379
 ```
 
-3. Start MongoDB and Redis:
+Create `client/.env` from the example:
+
 ```bash
-# MongoDB
+cp client/.env.example client/.env
+```
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+### 3. Start MongoDB
+
+```bash
 mongod
-
-# Redis
-redis-server
 ```
 
-4. Run development server:
+### 4. Seed the database (optional)
+
+Populates achievements, badges, and quests:
+
+```bash
+npm run seed
+```
+
+### 5. Run the app
+
 ```bash
 npm run dev
 ```
 
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:5000/api
+- Health check: http://localhost:5000/api/health
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Run backend and frontend concurrently |
+| `npm run dev:server` | Backend only (nodemon) |
+| `npm run dev:client` | Frontend only (Vite) |
+| `npm run build` | Build server and client |
+| `npm start` | Run production server (`dist/server.js`) |
+| `npm run seed` | Seed achievements, badges, and quests |
+
+## Frontend Routes
+
+| Route | Description |
+|-------|-------------|
+| `/login` | Sign in |
+| `/register` | Create account |
+| `/dashboard` | Stats, achievements preview, activity feed |
+| `/courses` | Course catalog with search and filters |
+| `/courses/:id` | Course detail, enroll, complete lessons |
+| `/leaderboard` | XP and level rankings |
+| `/achievements` | Full achievement grid |
+| `/social` | Activity feed, friends, user search |
+
+## API Overview
+
+All endpoints are prefixed with `/api`.
+
+### Auth
+- `POST /auth/register` — Register
+- `POST /auth/login` — Login
+- `GET /auth/me` — Current user (protected)
+
+### Courses
+- `GET /courses` — List courses (search, category, difficulty filters)
+- `GET /courses/:id` — Course detail
+- `POST /courses/:id/enroll` — Enroll (protected)
+- `POST /courses/lessons/:id/complete` — Complete lesson (protected)
+- `POST /courses` — Create course (instructor/admin)
+- `PUT /courses/:id` — Update course (instructor/admin)
+
+### Game
+- `GET /game/stats` — User stats (protected)
+- `GET /game/leaderboard` — Leaderboard
+- `GET /game/achievements` — Achievements (protected)
+- `POST /game/check-achievements` — Check for new unlocks (protected)
+- `GET /game/quests` — Quests (protected)
+- `POST /game/quests/:id/complete` — Complete quest (protected)
+
+### Social
+- `GET /social/friends` — Friends and pending requests (protected)
+- `POST /social/friends/request/:userId` — Send friend request (protected)
+- `POST /social/friends/accept/:userId` — Accept request (protected)
+- `GET /social/activity` — Activity feed (protected)
+- `GET /social/users/search` — Search users (protected)
+- `POST /social/teams` — Create team (protected)
+- `GET /social/teams/:id` — Get team (protected)
+- `POST /social/teams/:id/join` — Join team (protected)
+
 ## Deployment
 
-**Important**: This application uses a separated frontend/backend architecture:
+This app uses a **split architecture**: the frontend and backend deploy separately.
 
-- **Frontend**: Deployed to Vercel (static hosting)
-- **Backend**: Must be deployed separately to Railway, Render, Heroku, or similar service
+### Frontend (Vercel)
 
-Vercel's free tier only supports static sites and serverless functions, not long-running Node.js servers. The Express backend with WebSocket support requires a service that supports persistent connections.
-
-See [DEPLOYMENT_ARCHITECTURE.md](./DEPLOYMENT_ARCHITECTURE.md) for detailed deployment instructions.
-
-## Environment Variables
-
-### Local Development
-
-1. Copy the example environment file:
-   ```bash
-   cd client
-   cp .env.example .env
+1. Set the Vercel root directory to `client` (recommended), or use the root `vercel.json`.
+2. Add the environment variable:
    ```
-
-2. Edit `.env` with your local backend URL:
+   VITE_API_URL=https://your-backend-url.com/api
    ```
-   VITE_API_URL=http://localhost:5000/api
-   ```
+   The value must include `/api` and point to your live backend.
+3. Deploy. SPA routing is handled via `vercel.json` rewrites.
 
-### Vercel Deployment
+### Backend (Railway, Render, etc.)
 
-**⚠️ IMPORTANT:** If you see the error "Backend connection failed. The API URL is set to localhost in production", you need to set `VITE_API_URL` in Vercel.
+Deploy the Express server to a host that supports long-running Node.js processes and WebSockets.
 
-**Quick Fix:**
-1. Go to [Vercel Dashboard](https://vercel.com/dashboard) → Your Project → **Settings** → **Environment Variables**
-2. Click **Add New**
-3. **Name:** `VITE_API_URL`
-4. **Value:** `https://your-backend-url.com/api` (your actual backend URL with `/api`)
-5. **Environments:** Select all (Production, Preview, Development)
-6. Click **Save**
-7. **Redeploy** your application (Deployments → ... → Redeploy)
+Required environment variables:
 
-**See [VERCEL_ENV_QUICK_SETUP.md](./VERCEL_ENV_QUICK_SETUP.md) for step-by-step guide with screenshots.**
+```env
+MONGODB_URI=mongodb+srv://...
+JWT_SECRET=your-production-secret
+CLIENT_URL=https://your-frontend-url.vercel.app
+PORT=5000
+NODE_ENV=production
+```
 
-For detailed setup, see [VERCEL_ENV_SETUP.md](./VERCEL_ENV_SETUP.md).
+> Vercel's free tier does not run the Express backend. The backend must be hosted elsewhere.
 
-## API Documentation
+## License
 
-See `/api-docs` endpoint for detailed API documentation.
+MIT
