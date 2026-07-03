@@ -44,18 +44,24 @@ const Dashboard = () => {
   }, []);
 
   const fetchDashboardData = async () => {
-    try {
-      const [statsRes, activityRes] = await Promise.all([
-        api.get('/game/stats'),
-        api.get('/social/activity?limit=5'),
-      ]);
-      setStats(statsRes.data.data);
-      setActivities(activityRes.data.data);
-    } catch (error: any) {
-      toast.error('Failed to load dashboard data');
-    } finally {
-      setLoading(false);
+    const [statsResult, activityResult] = await Promise.allSettled([
+      api.get('/game/stats'),
+      api.get('/social/activity?limit=5'),
+    ]);
+
+    if (statsResult.status === 'fulfilled') {
+      setStats(statsResult.value.data.data);
+    } else {
+      toast.error('Failed to load stats');
     }
+
+    if (activityResult.status === 'fulfilled') {
+      setActivities(activityResult.value.data.data);
+    } else {
+      toast.error('Failed to load activity feed');
+    }
+
+    setLoading(false);
   };
 
   if (loading) {

@@ -1,7 +1,8 @@
 import { Response } from 'express';
+import { SortOrder } from 'mongoose';
 import { AuthRequest } from '../middleware/auth';
 import User from '../models/User';
-import Achievement from '../models/Achievement';
+import Achievement, { IAchievement } from '../models/Achievement';
 import Badge from '../models/Badge';
 import Quest from '../models/Quest';
 import Activity from '../models/Activity';
@@ -40,7 +41,8 @@ export const getLeaderboard = asyncHandler(async (req: AuthRequest, res: Respons
     }
   }
 
-  const sortField = type === 'level' ? { level: -1, xp: -1 } : { xp: -1 };
+  const sortField: Record<string, SortOrder> =
+    type === 'level' ? { level: -1, xp: -1 } : { xp: -1 };
 
   const users = await User.find()
     .select('username avatar xp level')
@@ -88,65 +90,50 @@ export const getAchievements = asyncHandler(async (req: AuthRequest, res: Respon
 // @route   POST /api/game/check-achievements
 // @access  Private
 export const checkAchievements = asyncHandler(async (req: AuthRequest, res: Response) => {
-  // Fetch user initially
-  let user = await User.findById(req.user!._id);
-  if (!user) {
-    throw new AppError('User not found', 404);
-  }
-
-  const unlocked: any[] = [];
-
-  // Continue checking achievements until no new ones are unlocked
-  // This handles cases where unlocking one achievement makes the user eligible for another
+  const unlocked: IAchievement[] = [];
   let hasNewUnlocks = true;
   let iterations = 0;
-  const maxIterations = 10; // Prevent infinite loops
+  const maxIterations = 10;
 
   while (hasNewUnlocks && iterations < maxIterations) {
     iterations++;
     hasNewUnlocks = false;
 
-    // Fetch achievements that user hasn't unlocked yet
-    const achievements = await Achievement.find({
-      _id: { $nin: user.achievements },
+    const currentUser = await User.findById(req.user!._id);
+    if (!currentUser) {
+      throw new AppError('User not found', 404);
+    }
+
+    const achievementsToCheck: IAchievement[] = await Achievement.find({
+      _id: { $nin: currentUser.achievements },
     });
 
-    // If no achievements to check, break
-    if (achievements.length === 0) {
+    if (achievementsToCheck.length === 0) {
       break;
     }
 
-    for (const achievement of achievements) {
+    for (const achievement of achievementsToCheck) {
       let shouldUnlock = false;
-
-      // Re-fetch user to get latest stats (XP, level, etc.) for accurate checks
-      // This ensures we check against the most up-to-date user data after previous unlocks
-      user = await User.findById(req.user!._id);
-      if (!user) {
-        throw new AppError('User not found', 404);
-      }
 
       switch (achievement.requirement.type) {
         case 'xp':
-          shouldUnlock = user.xp >= achievement.requirement.value;
+          shouldUnlock = currentUser.xp >= achievement.requirement.value;
           break;
         case 'level':
-          shouldUnlock = user.level >= achievement.requirement.value;
+          shouldUnlock = currentUser.level >= achievement.requirement.value;
           break;
         case 'streak':
-          shouldUnlock = user.streak >= achievement.requirement.value;
+          shouldUnlock = currentUser.streak >= achievement.requirement.value;
           break;
         case 'courses_completed':
-          // This would require tracking completed courses
           break;
         case 'friends':
-          shouldUnlock = user.friends.length >= achievement.requirement.value;
+          shouldUnlock = currentUser.friends.length >= achievement.requirement.value;
           break;
       }
 
       if (shouldUnlock) {
-        // Use atomic operation to prevent race conditions (duplicate achievement unlocks)
-        const originalAchievementsLength = user.achievements.length;
+        const originalAchievementsLength = currentUser.achievements.length;
         const updatedUser = await User.findByIdAndUpdate(
           req.user!._id,
           {
@@ -159,29 +146,25 @@ export const checkAchievements = asyncHandler(async (req: AuthRequest, res: Resp
           throw new AppError('User not found', 404);
         }
 
-        // Verify achievement was added (check if array length increased)
         if (updatedUser.achievements.length === originalAchievementsLength) {
-          // Achievement already unlocked, skip
           continue;
         }
 
-        // Award XP using the updated user object
         const actualXPEarned = updatedUser.addXP(achievement.xpReward);
         await updatedUser.save();
 
-        // Update local user reference to reflect changes for next iteration
-        user = updatedUser;
         hasNewUnlocks = true;
-
         unlocked.push(achievement);
 
         await Activity.create({
-          user: user._id,
+          user: updatedUser._id,
           type: 'achievement_unlocked',
           title: 'Achievement Unlocked!',
           description: `You unlocked: ${achievement.name}`,
           metadata: { achievementId: achievement._id, achievementName: achievement.name, xp: actualXPEarned },
         });
+
+        break;
       }
     }
   }

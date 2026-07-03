@@ -30,7 +30,7 @@ const Courses = () => {
 
   const fetchCourses = async () => {
     try {
-      const params: any = {};
+      const params: Record<string, string | number> = { limit: 100 };
       if (category) params.category = category;
       if (difficulty) params.difficulty = difficulty;
       if (search) params.search = search;

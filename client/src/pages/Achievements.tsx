@@ -68,7 +68,12 @@ const Achievements = () => {
         Unlock achievements by completing various challenges and milestones
       </p>
 
-      {Object.entries(groupedAchievements).map(([category, items]) => (
+      {Object.keys(groupedAchievements).length === 0 ? (
+        <div className="card text-center" style={{ padding: '3rem' }}>
+          <p className="text-gray">No achievements available yet. Run <code>npm run seed</code> to populate the database.</p>
+        </div>
+      ) : (
+        Object.entries(groupedAchievements).map(([category, items]) => (
         <div key={category} className="card" style={{ marginBottom: '2rem' }}>
           <h2 style={{ textTransform: 'capitalize', marginBottom: '1rem' }}>
             {category} Achievements
@@ -108,7 +113,8 @@ const Achievements = () => {
             ))}
           </div>
         </div>
-      ))}
+      ))
+      )}
     </div>
   );
 };

@@ -90,7 +90,7 @@ mongod
 
 ### 4. Seed the database (optional)
 
-Populates achievements, badges, and quests:
+Populates achievements, badges, quests, and sample courses:
 
 ```bash
 npm run seed
@@ -115,7 +115,7 @@ npm run dev
 | `npm run dev:client` | Frontend only (Vite) |
 | `npm run build` | Build server and client |
 | `npm start` | Run production server (`dist/server.js`) |
-| `npm run seed` | Seed achievements, badges, and quests |
+| `npm run seed` | Seed achievements, badges, quests, and courses |
 
 ## Frontend Routes
 

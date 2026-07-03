@@ -34,11 +34,12 @@ export const errorHandler = (
     const statusCode = err.statusCode || 500;
     const message = err.message || 'Server Error';
 
-    return res.status(statusCode).json({
+    res.status(statusCode).json({
       success: false,
       message,
       ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
     });
+    return;
   }
 
   // Handle generic Error instances
@@ -46,11 +47,12 @@ export const errorHandler = (
     const statusCode = (err as any).statusCode || (err as any).status || 500;
     const message = err.message || 'Server Error';
 
-    return res.status(statusCode).json({
+    res.status(statusCode).json({
       success: false,
       message,
       ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
     });
+    return;
   }
 
   // Handle any other error types (validation errors, database errors, etc.)

@@ -31,7 +31,7 @@ export const protect = async (
             email: 'demo@eduverse.local',
             password: 'demo123',
           });
-          guestUser = (await User.findById(created._id).select('-password'))!;
+          guestUser = (await User.findById(created._id).select('-password')) as IUser;
         }
         req.user = guestUser;
         next();
@@ -51,15 +51,17 @@ export const protect = async (
         getJWTSecret()
       ) as { id: string };
 
-      req.user = await User.findById(decoded.id).select('-password');
+      const foundUser = (await User.findById(decoded.id).select('-password')) as IUser | null;
 
-      if (!req.user) {
+      if (!foundUser) {
         res.status(401).json({
           success: false,
           message: 'User not found',
         });
         return;
       }
+
+      req.user = foundUser;
 
       next();
     } catch (error) {
